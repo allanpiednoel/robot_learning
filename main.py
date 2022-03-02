@@ -257,8 +257,8 @@ class SimpleRobotControl:
 
         # TODO 
         """plus je suis loin, plus je vais vite, ou plus je tourne"""
-        local_speed = 0
-        local_turn = 0
+        local_speed = distance/t
+        local_turn = m.theta_goal/t
 
         m1_speed, m2_speed = m.ik(local_speed, local_turn)
         m.m1.speed = m1_speed
@@ -268,8 +268,17 @@ class SimpleRobotControl:
         """Returns the smallest distance between 2 angles
         """
         # TODO
-        d = 50
-        return d
+        d = a-b
+        if -math.pi<d<math.pi :
+            return d
+        else : 
+            if d>math.pi:
+                while d>math.pi:
+                    d=d-2*math.pi
+            if d<-math.pi:
+                while d<-math.pi:
+                    d=d+2*math.pi
+            return d
 
 
 def main():
