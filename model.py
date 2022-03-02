@@ -97,8 +97,8 @@ class Model(object):
 
 
 
-        dXr = linear_speed - self.x
-        dYr = rotation_speed - self.y
+        dXr = self.r * math.sin(self.theta)
+        dYr = self.r * (1-math.cos(self.theta))
         x_m= dXr * math.cos(self.theta) - dYr * math.sin(self.theta)
         y_m= dXr * math.sin(self.theta) + dYr * math.cos(self.theta)
 
