@@ -246,39 +246,58 @@ class SimpleRobotControl:
             # That juicy 60 Hz :D
             self.clock.tick(1 / self.update_period)
 
+    def angle_diff(self, a, b):
+            """
+            Returns the smallest distance between 2 angles
+            """
+            # TODO
+            d = a-b
+            if -math.pi<d<math.pi :
+                return d
+            else : 
+                if d>math.pi:
+                    while d>math.pi:
+                        d=d-2*math.pi
+                if d<-math.pi:
+                    while d<-math.pi:
+                        d=d+2*math.pi
+                return d
+
+
     def asserv(self, m=None):
         """Sets the speeds of the 2 motors to get the robot to its destination point
         """
+
         if m == None:
             m = self.m
         distance = math.sqrt(
             (m.x_goal - m.x) * (m.x_goal - m.x) + (m.y_goal - m.y) * (m.y_goal - m.y)
         )
-
+        
         # TODO 
+        local_speed = 0.0
+        self.m.theta_goal = math.atan2(m.x_goal,m.y_goal)
+        dtheta = self.angle_diff(self.m.theta, self.m.theta_goal)
         """plus je suis loin, plus je vais vite, ou plus je tourne"""
-        local_speed = distance/t
-        local_turn = m.theta_goal/t
+        #peut etre : si distance augmente, on augmente la vitesse
+        #si distance reduit: reduit la distance
+        if distance==0:
+            local_speed =0
+        else:
+            local_speed = distance *0.1
+        print (distance)
+        if dtheta == 0:
+            local_turn = 0
+        else:
+            local_turn = dtheta * 0.1
 
         m1_speed, m2_speed = m.ik(local_speed, local_turn)
         m.m1.speed = m1_speed
         m.m2.speed = m2_speed
 
-    def angle_diff(self, a, b):
-        """Returns the smallest distance between 2 angles
-        """
-        # TODO
-        d = a-b
-        if -math.pi<d<math.pi :
-            return d
-        else : 
-            if d>math.pi:
-                while d>math.pi:
-                    d=d-2*math.pi
-            if d<-math.pi:
-                while d<-math.pi:
-                    d=d+2*math.pi
-            return d
+        
+
+   
 
 
 def main():
