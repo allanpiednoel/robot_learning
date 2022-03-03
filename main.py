@@ -251,17 +251,10 @@ class SimpleRobotControl:
             Returns the smallest distance between 2 angles
             """
             # TODO
-            d = a-b
-            if -math.pi<d<math.pi :
-                return d
-            else : 
-                if d>math.pi:
-                    while d>math.pi:
-                        d=d-2*math.pi
-                if d<-math.pi:
-                    while d<-math.pi:
-                        d=d+2*math.pi
-                return d
+            d = a - b
+            d = ((d + math.pi) % (2 * math.pi)) - math.pi
+            return d
+                
 
 
     def asserv(self, m=None):
@@ -276,7 +269,7 @@ class SimpleRobotControl:
         
         # TODO 
         local_speed = 0.0
-        self.m.theta_goal = math.atan2(m.x_goal,m.y_goal)
+        self.m.theta_goal = math.atan2((m.y_goal-m.y),(m.x_goal-m.x))
         dtheta = self.angle_diff(self.m.theta, self.m.theta_goal)
         """plus je suis loin, plus je vais vite, ou plus je tourne"""
         #peut etre : si distance augmente, on augmente la vitesse
@@ -284,12 +277,12 @@ class SimpleRobotControl:
         if distance==0:
             local_speed =0
         else:
-            local_speed = distance *0.1
+            local_speed = distance *0.6
         print (distance)
         if dtheta == 0:
             local_turn = 0
         else:
-            local_turn = dtheta * 0.1
+            local_turn = dtheta * 1.2
 
         m1_speed, m2_speed = m.ik(local_speed, local_turn)
         m.m1.speed = m1_speed
