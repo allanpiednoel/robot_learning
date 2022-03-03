@@ -53,8 +53,8 @@ class Model(object):
         """
         
         # TODO
-        m1_speed = linear_speed + rotational_speed * (self.l/2)
-        m2_speed = linear_speed - rotational_speed * (self.l/2)
+        m1_speed = linear_speed - (self.l/2)* rotational_speed 
+        m2_speed = linear_speed + (self.l/2)* rotational_speed 
         return m1_speed, m2_speed
 
     def dk(self, m1_speed, m2_speed):
@@ -72,7 +72,7 @@ class Model(object):
         # TODO
       #  linear_speed = ((m1_speed - rotation_speed) / (self.l/2))
        # rotation_speed = (m1_speed - linear_speed) / (self.l/2)
-
+     
         linear_speed = (m1_speed + m2_speed)/2
         rotation_speed = (m1_speed - m2_speed)/self.l
 
@@ -88,17 +88,20 @@ class Model(object):
         """
         # Going from wheel speeds to robot speed
         linear_speed, rotation_speed = self.dk(self.m1.speed, self.m2.speed)
-        
+        dp = linear_speed * dt
+        alpha = rotation_speed * dt
         # TODO
-        # 
         """question 2"""
-        #self.x_goal= self.r * math.sin(self.theta_goal)
-        #self.y_goal= self.r * (1-math.cos(self.theta_goal))
 
 
-
-        dXr = self.r * math.sin(self.theta)
-        dYr = self.r * (1-math.cos(self.theta))
+        if rotation_speed!=0:
+            dXr = (dp/alpha) * math.sin(alpha)
+            dYr = (dp/alpha) * (1-math.cos(alpha))
+        
+        else:
+            dXr = dp
+            dYr = 0
+        
         x_m= dXr * math.cos(self.theta) - dYr * math.sin(self.theta)
         y_m= dXr * math.sin(self.theta) + dYr * math.cos(self.theta)
 
@@ -106,6 +109,4 @@ class Model(object):
         # Updating the robot position
         self.x = self.x + x_m  # TODO
         self.y = self.y + y_m # TODO
-        #self.theta = self.theta + self.theta_goal  # TODO
-        #dans le main, self.theta -> map 
-        #self.m.theta -> theta robot dr
+        self.theta = self.theta + (rotation_speed*dt) # TODO
